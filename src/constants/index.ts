@@ -1,0 +1,20 @@
+export const ROOM_TTL_SECONDS = 60 * 10
+export const ANIMALS = [
+  "lion",
+  "tiger",
+  "bear",
+  "eagle",
+  "shark",
+  "wolf",
+  "fox",
+  "owl",
+  "panther",
+  "leopard",
+  "dolphin",
+  "falcon",
+  "rhino",
+  "zebra",
+  "giraffe",
+  "hippo",
+  "crocodile",
+]
