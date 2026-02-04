@@ -34,17 +34,21 @@ const Page = () => {
         setTimeRemaining(ttlData.ttl)
       }
   },[ttlData])
-    const { mutate: destroyRoom } = useMutation({
-    mutationFn: async () => {
-      await client.room.delete(null,{ query: { roomId } });
-    }
-  })
+    
+  const { mutate: destroyRoom } = useMutation({
+  mutationFn: async () => {
+    await client.room.delete(null,{ query: { roomId } });
+  },
+  onSuccess: () => {
+    router.push('/?destroyed=true');
+  }
+})
    
 
   useEffect(()=>{
-    if(timeRemaining === null || timeRemaining <=0) return;
+    if(timeRemaining === null) return;
     if(timeRemaining === 0){
-      destroyRoom()
+     destroyRoom()
       return
     }
     const interval = setInterval(()=>{
