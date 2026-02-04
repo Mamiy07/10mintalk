@@ -27,16 +27,24 @@ const Page = () => {
     }
   })
 
+
+
   useEffect(()=>{
       if(ttlData?.ttl !== undefined){
         setTimeRemaining(ttlData.ttl)
       }
   },[ttlData])
+    const { mutate: destroyRoom } = useMutation({
+    mutationFn: async () => {
+      await client.room.delete(null,{ query: { roomId } });
+    }
+  })
+   
 
   useEffect(()=>{
     if(timeRemaining === null || timeRemaining <=0) return;
     if(timeRemaining === 0){
-      router.push('/?destroyed=true' )
+      destroyRoom()
       return
     }
     const interval = setInterval(()=>{
@@ -59,6 +67,8 @@ const Page = () => {
     }
   })
 
+  
+
   const { mutate: sendMessage,isPending } = useMutation({
     mutationFn: async ({ text }: { text: string }) => {
       await client.messages.post(
@@ -72,12 +82,9 @@ const Page = () => {
       setInput("");
     },
   });
-  const { mutate: destroyRoom } = useMutation({
-    mutationFn: async () => {
-      await client.room.delete(null,{ query: { roomId } });
-    }
-  })
 
+  
+   
   useRealtime({
       channels:[roomId],
       events:['chat.message','chat.destroy'],
@@ -103,10 +110,10 @@ const Page = () => {
   return (
     <main className="flex flex-col h-dvh overflow-hidden">
   {/* HEADER */}
-  <header className="border-b border-zinc-800 p-3 sm:p-4 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between bg-zinc-900/30">
+  <header className="border-b border-zinc-800 p-3 sm:p-4 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between bg-zinc-800 dark:bg-zinc-900/30">
     <div className="flex items-center gap-3 sm:gap-4">
       <div className="flex flex-col">
-        <span className="text-[10px] sm:text-xs text-zinc-500 uppercase">
+        <span className="text-[10px] sm:text-xs text-white dark:text-zinc-500 uppercase">
           Room ID
         </span>
         <div className="flex items-center gap-2">
@@ -115,7 +122,7 @@ const Page = () => {
           </span>
           <button
             onClick={copyLink}
-            className="text-[9px] sm:text-[10px] bg-zinc-800 hover:bg-zinc-700 px-2 py-0.5 rounded text-zinc-400 hover:text-zinc-200 transition-colors"
+            className="text-[9px] sm:text-[10px] bg-zinc-950 dark:bg-zinc-800 hover:bg-zinc-700 px-2 py-0.5 rounded text-white dark:text-zinc-400 hover:text-zinc-200 transition-colors"
           >
             {copy}
           </button>
@@ -125,7 +132,7 @@ const Page = () => {
       <div className="hidden sm:block h-8 w-px bg-zinc-800" />
 
       <div className="flex flex-col">
-        <span className="text-[10px] sm:text-xs text-zinc-500 uppercase">
+        <span className="text-[10px] sm:text-xs text-white dark:text-zinc-500 uppercase">
           Self destruct
         </span>
         <span
@@ -144,7 +151,7 @@ const Page = () => {
 
     <button
       onClick={() => destroyRoom()}
-      className="text-xs bg-zinc-800 hover:bg-red-600 px-3 py-2 rounded text-zinc-400 hover:text-white font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+      className="text-xs bg-zinc-950 hover:bg-red-600 px-3 py-2 rounded text-white dark:text-zinc-400 hover:text-white font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-50"
     >
       💣 DESTROY NOW
     </button>
@@ -173,11 +180,11 @@ const Page = () => {
             >
               {msg.sender === username ? "You" : msg.sender}
             </span>
-            <span className="text-[9px] text-zinc-600">
+            <span className="text-[9px] text-black dark:text-zinc-600">
               {format(msg.timestamp, "HH:mm")}
             </span>
           </div>
-          <p className="text-sm text-zinc-300 leading-relaxed break-words">
+          <p className="text-sm dark:text-zinc-300 leading-relaxed break-words">
             {msg.text}
           </p>
         </div>
@@ -186,10 +193,10 @@ const Page = () => {
   </div>
 
   {/* INPUT */}
-  <div className="p-3 sm:p-4 border-t border-zinc-800 bg-zinc-900/30">
+  <div className="p-3 sm:p-4 border-t border-zinc-800 bg-zinc-800 dark:bg-zinc-900/30">
     <div className="flex gap-2 sm:gap-4">
       <div className="flex-1 relative">
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-green-500 animate-pulse">
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-green-600 dark:text-green-500 animate-pulse">
           {">"}
         </span>
         <input
@@ -204,7 +211,7 @@ const Page = () => {
           autoFocus
           type="text"
           placeholder="Type message..."
-          className="w-full bg-black border border-zinc-800 focus:border-zinc-700 focus:outline-none text-zinc-100 placeholder:text-zinc-700 py-3 pl-7 pr-3 text-sm rounded"
+          className="w-full bg-white dark:bg-black border border-zinc-800 focus:border-zinc-700 focus:outline-none  dark:text-zinc-100 placeholder:text-black dark:placeholder:text-zinc-700 py-3 pl-7 pr-3 text-sm rounded"
         />
       </div>
 
@@ -214,7 +221,7 @@ const Page = () => {
           setInput("");
         }}
         disabled={!input.trim() || isPending}
-        className="bg-zinc-800 text-zinc-300 px-4 sm:px-6 text-sm font-bold rounded transition-all hover:text-white disabled:opacity-50"
+        className= "bg-white dark:bg-zinc-800  dark:text-zinc-300 px-4 sm:px-6 text-sm font-bold rounded transition-all hover:text-white disabled:opacity-50"
       >
         SEND
       </button>
